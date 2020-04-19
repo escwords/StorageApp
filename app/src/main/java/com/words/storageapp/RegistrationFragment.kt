@@ -7,10 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.words.storageapp.databinding.FragmentRegistrationBinding
 import kotlinx.android.synthetic.main.fragment_registration.*
@@ -25,7 +27,10 @@ import timber.log.Timber
 class RegistrationFragment : Fragment() {
 
 
+
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var regEmail: TextInputEditText
+    private lateinit var regPassword: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,35 +45,38 @@ class RegistrationFragment : Fragment() {
         val binding: FragmentRegistrationBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_registration, container, false)
 
+        regEmail = binding.regEmail
+        regPassword = binding.regPass
+
         binding.registerBtn.setOnClickListener { view ->
-            if (isValidateForms(view)) {
-                createAccount(view.regEmail.text.toString(), view.regPass.text.toString())
+            if (isValidateForms()) {
+                createAccount(regEmail.text.toString(), regPassword.text.toString())
             }
         }
         return binding.root
     }
 
-    private fun isValidateForms(view: View): Boolean {
+    private fun isValidateForms(): Boolean {
         var valid = true
 
-        val email = view.regEmail.text.toString()
-        val password = view.regPass.text.toString()
+        val email = regEmail.text.toString()
+        val password = regPassword.text.toString()
 
         val isValidEmail = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
         val isValidPassword = password.isNotEmpty() && password.length > 7
 
         if (!isValidEmail) {
-            view.regEmail.error = "Email is not valid"
+            regEmail.error = "Email is not valid"
             valid = false
         } else {
-            view.regEmail.error = null
+            regEmail.error = null
         }
         if (!isValidPassword) {
-            view.regPass.error = "Password is too short"
+            regPassword.error = "Password is too short"
             valid = false
         } else {
-            view.regPass.error = null
+            regPassword.error = null
         }
         return valid
     }

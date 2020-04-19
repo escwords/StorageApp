@@ -27,7 +27,7 @@ android {
         }
     }
 
-    dataBinding{
+    dataBinding {
         enabled = true
     }
 }
@@ -51,7 +51,7 @@ dependencies {
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
-   // implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+    // implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     //multiDex
     implementation "androidx.multidex:multidex:2.0.1"

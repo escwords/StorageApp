@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.words.storageapp.databinding.FragmentLoginBinding
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -26,6 +27,9 @@ import java.util.regex.Pattern
 class LoginFragment : Fragment(), View.OnClickListener {
 
     private lateinit var firebaseAuth: FirebaseAuth
+
+    private lateinit var logEmail: TextInputEditText
+    private lateinit var logPassWord: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +47,9 @@ class LoginFragment : Fragment(), View.OnClickListener {
 
         //progressBar = binding.loginProgressBar
 
+        logEmail = binding.lgEmail
+        logPassWord = binding.lgPass
+
         binding.login.setOnClickListener(this)
         binding.registerClicker2.setOnClickListener(this)
 
@@ -50,27 +57,28 @@ class LoginFragment : Fragment(), View.OnClickListener {
         return binding.root
     }
 
-    private fun validate(view: View): Boolean {
+
+    private fun validate(): Boolean {
         var valid = true
 
-        val email = view.lgEmail.text.toString()
-        val password = view.lgPass.text.toString()
+        val email = logEmail.text.toString()
+        val password = logPassWord.text.toString()
 
         val isValidEmail = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
         val isValidPassword = password.isNotEmpty() && password.length > 7
 
         if (!isValidEmail) {
-            view.lgEmail.error = "Email is not valid"
+            logEmail.error = "Email is not valid"
             valid = false
         } else {
-            view.lgEmail.error = null
+            logEmail.error = null
         }
         if (!isValidPassword) {
-            view.lgPass.error = "Password is too short"
+            logPassWord.error = "Password is too short"
             valid = false
         } else {
-            view.lgPass.error = null
+            logPassWord.error = null
         }
         return valid
     }
@@ -80,8 +88,8 @@ class LoginFragment : Fragment(), View.OnClickListener {
         when (view!!.id) {
             R.id.login -> {
 
-                if (validate(view)) {
-                    signInUser(view.lgEmail.text.toString(), view.lgPass.text.toString())
+                if (validate()) {
+                    signInUser(logEmail.text.toString(), logPassWord.text.toString())
                 }
             }
             R.id.registerClicker2 -> {
