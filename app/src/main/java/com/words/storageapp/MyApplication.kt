@@ -3,9 +3,12 @@ package com.words.storageapp
 import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
+import com.words.storageapp.di.AppDiContainer
 import timber.log.Timber
 
 class MyApplication : Application() {
+
+    val appContainer = AppDiContainer(this)
 
     override fun onCreate() {
         super.onCreate()

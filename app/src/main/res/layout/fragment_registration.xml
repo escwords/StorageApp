@@ -50,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:hint="@string/password_hintText"
+            app:passwordToggleEnabled="true"
             app:boxBackgroundColor="@color/colorWhite"
             app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
             app:layout_constraintEnd_toEndOf="@+id/email_textLayout"
@@ -66,18 +67,29 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/register_btn"
-            style="@android:style/TextAppearance.Material.Button"
-            android:layout_width="0dp"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="10dp"
             android:background="@color/colorAccent"
             android:text="@string/register"
             android:textAllCaps="false"
             app:cornerRadius="20dp"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toBottomOf="@+id/password_textLayout" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/backLogin_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:background="@color/colorWhite"
+            android:text="@string/back_to_login"
+            app:icon="@drawable/arrow_back"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="@+id/password_textLayout"
             app:layout_constraintTop_toBottomOf="@+id/password_textLayout" />
 
 

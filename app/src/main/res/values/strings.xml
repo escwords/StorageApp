@@ -7,5 +7,52 @@
     <string name="password_hintText">Password</string>
     <string name="sign_in">Login</string>
     <string name="register">Register</string>
-    <string name="log_out">Log out</string>
+    <string name="log_out">Logout</string>
+
+
+    <!--Defining database node name-->
+    <string name="db_node">users</string>
+
+    <string name="phone_number">Phone number</string>
+    <string name="createProfile">Create Profile</string>
+    <string name="submit">Submit</string>
+    <string name="change_picture">change picture</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="edit">Edit</string>
+    <string name="contact_detail">Contact Detail</string>
+    <string name="skill">Skill</string>
+    <string name="dashboard">DashBoard</string>
+    <string name="profile_picture">profile picture</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="address">Address</string>
+    <string name="choose_from_camera">Choose From Camera</string>
+    <string name="choose_from_memory">Choose From Memory</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="email_address">Email Address</string>
+    <string name="gender">Gender</string>
+    <string name="date_of_birth">Date Of Birth</string>
+    <string name="personal_details">Personal Details</string>
+    <string name="add_image_to_album">Add Image To album</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="select_from_photos">Select from Photos</string>
+    <string name="take_photos">Take Photo</string>
+    <string name="profile_photo">Profile Photo</string>
+
+
+    //Permission String
+    <string name="request_permission_string">Location permission needed for core functionality</string>
+    <string name="denied_permission_string">Enable your Location in Setting</string>
+    <string name="ok">OK</string>
+    <string name="settings">SETTINGS</string>
+    <string name="sign_out">Sign Out</string>
+
+    //fireStore String
+    <string name="fireStore_name">Skills</string>
+    <string name="Album_list">images</string>
+
+
+    <string name="add_work_image">Add Work Image</string>
+
+
 </resources>

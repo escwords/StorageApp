@@ -1,4 +1,4 @@
-package com.words.storageapp
+package com.words.storageapp.ui.authentication
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import com.google.firebase.auth.FirebaseAuth
+import com.words.storageapp.R
+import com.words.storageapp.ui.main.MainActivity
 
 class Authentication : AppCompatActivity() {
 
@@ -29,25 +31,35 @@ class Authentication : AppCompatActivity() {
         if (user != null) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            finish() //Check out the different b/w calling this function and implementing intent.Flag_activity_clear Task and others
         }
     }
 
     fun moveToRegistrationFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_holder, RegistrationFragment())
-            .addToBackStack(RegistrationFragment::class.java.simpleName)
+            .replace(
+                R.id.fragment_holder,
+                RegistrationFragment()
+            )
             .commit()
     }
 
-
+    //consider the change this function provides
     override fun onBackPressed() {
-        super.onBackPressed()
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            finish()
+        } else {
+            super.onBackPressed()
 
+        }
     }
 
     fun moveToLoginScreen() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_holder, LoginFragment())
+            .replace(
+                R.id.fragment_holder,
+                LoginFragment()
+            )
             .addToBackStack(LoginFragment::class.java.simpleName)
             .commit()
     }
@@ -60,5 +72,6 @@ class Authentication : AppCompatActivity() {
     fun hideProgressBar() {
         progressBar.visibility = View.INVISIBLE
     }
+
 
 }
