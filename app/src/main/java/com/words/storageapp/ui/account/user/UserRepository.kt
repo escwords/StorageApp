@@ -17,60 +17,41 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 //scope to class to Account Activity scope
-class UserRepository(
-    val database: AppDatabase,
-    val firebaseStorage: FirebaseStorage,
-    private val firestore: FirebaseFirestore,
-    private val userManager: UserManager
+class UserRepository @Inject constructor(
+    val database: AppDatabase
 ) {
-    /*
-    * 1. In this class we retrieve logged User data from room data base(i.e using exposing Room, for viewModel)
-    * 2. we set up function to insert user on cloud firestore
-    * 3. we set up function to insert user on Room database
-    * 4. we set up function to update firestore data and  room data
-    * 5. we set up function to prefetch firestore data and insert in room
-    * 
-    * */
 
     val loggedUser: LiveData<LoggedInUser> = database.loggedInUserDao().getUser()
 
-    private val skilledDocument = firestore.collection("Skills").document(userManager.uid)
-
-    private val skilledCollection = firestore.collection("Skills")
-
-    private val source = Source.SERVER
-
-    suspend fun prefetch() {
-        withContext(Dispatchers.IO) {
-            val userDocument = skilledDocument.get(source).await()
-            val userObject = userDocument.toObject(RegisterUser::class.java)
-            if (userObject != null) {
-                val currentUser = userObject.toLoggedInUser()
-                database.loggedInUserDao().insertUser(currentUser)
-            }
+    suspend fun updateUser(user: LoggedInUser): Boolean {
+        return withContext(Dispatchers.IO) {
+            database.loggedInUserDao().update(user)
+            true
         }
     }
 
-    @ExperimentalCoroutinesApi
-    fun insert(user: RegisterUser) = flow<State<DocumentReference>> {
-        val currentUser = user.apply {
-            userId = userManager.uid
+    suspend fun insert(user: LoggedInUser) {
+        withContext(Dispatchers.IO) {
+            database.loggedInUserDao().insertUser(user)
         }
-        emit(State.loading())
-        val insertRef = skilledCollection.add(currentUser).await()
-        //emit the documentReference to enable me addOnCompleteListener
-        emit(State.success(insertRef))
+    }
 
-    }.catch {
-        //if exception emit exception with state failed
-        emit(State.failed(it.message.toString()))
+    suspend fun delete(): Boolean {
+        return withContext(Dispatchers.IO) {
+            database.loggedInUserDao().deleteUser()
+            true
+        }
+    }
 
-    }.flowOn(Dispatchers.IO)
+    suspend fun setUpAccount(user: LoggedInUser): Boolean {
+        return withContext(Dispatchers.IO) {
+            database.loggedInUserDao().setUpAccount(user)
+            true
+        }
+    }
 
-    /*fun updateUser(){
-
-    }*/
 
 }

@@ -1,12 +1,13 @@
 package com.words.storageapp.adapters
 
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.words.storageapp.ui.main.AboutFragment
-import com.words.storageapp.ui.main.AlbumFragment
+import com.words.storageapp.ui.detail.AboutFragment
+import com.words.storageapp.ui.detail.AlbumFragment
+import com.words.storageapp.util.utilities.USERID
 
-class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+class ScreenSlidePagerAdapter(fa: Fragment, skillId: String) : FragmentStateAdapter(fa) {
 
     companion object {
         const val ALBUM_FRAGMENT_INT = 0
@@ -14,8 +15,20 @@ class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
     }
 
     private val getTabFragment: Map<Int, () -> Fragment> = mapOf(
-        ALBUM_FRAGMENT_INT to { AlbumFragment() },
-        ABOUT_FRAGMENT_INT to { AboutFragment() }
+        ALBUM_FRAGMENT_INT to {
+            AlbumFragment().apply {
+                val bundle =
+                    bundleOf(USERID to skillId.trimIndent()) //skillId was trimmed because it was indented which i don't know how
+                arguments = bundle
+            }
+        },
+        ABOUT_FRAGMENT_INT to {
+            AboutFragment().apply {
+                val bundle =
+                    bundleOf(USERID to skillId) //skillId was used here to fetch data from database
+                arguments = bundle
+            }
+        }
     )
 
     override fun getItemCount(): Int = getTabFragment.size

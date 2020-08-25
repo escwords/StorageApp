@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="skills"
+            type="com.words.storageapp.database.model.MiniWokrData" />
+
+        <variable
+            name="clickListener"
+            type="com.words.storageapp.adapters.ResultListAdapter.ClickListener" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/dashboard_background2"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:onClick="@{() -> clickListener.onClick(skills)}"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+
+            >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/appCompatImageView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:civ_border_width="4dp"
+                app:civ_border_color="@color/primaryDarkColor"
+                android:src="@drawable/jetbrains"
+                app:imgSrcUri="@{skills.image_url}"
+                android:layout_marginTop="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{skills.first_name}"
+            android:textStyle="bold"
+            android:elevation="10dp"
+            android:textColor="@color/colorWhite"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.title"
+            tools:text="Nnamani" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{skills.skills}"
+            android:textStyle="bold"
+            android:elevation="10dp"
+            android:layout_marginBottom="20dp"
+            android:textColor="@color/colorWhite"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.title"
+            tools:text="plumber" />
+    </LinearLayout>
+</layout>

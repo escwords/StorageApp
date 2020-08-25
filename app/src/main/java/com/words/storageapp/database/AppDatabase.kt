@@ -1,13 +1,15 @@
 package com.words.storageapp.database
 
 import android.content.Context
-import android.telecom.Call
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.words.storageapp.database.model.Converter
 import com.words.storageapp.database.model.LoggedInUser
 import com.words.storageapp.database.model.WokrData
 import com.words.storageapp.database.model.WokrDataFts
+import com.words.storageapp.work.SeedDatabaseWorker
 
 @Database(
     entities = [LoggedInUser::class, WokrData::class, WokrDataFts::class],
@@ -36,19 +38,13 @@ abstract class AppDatabase : RoomDatabase() {
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-
+                        //pre-populating the database with dummy data
+                        val request = OneTimeWorkRequestBuilder<SeedDatabaseWorker>().build()
+                        WorkManager.getInstance(context).enqueue(request)
                     }
                 })
+                .fallbackToDestructiveMigration()
                 .build()
-
         }
     }
-
-//    private lateinit var instance:AppDatabase
-//    fun getInstance2(context: Context): AppDatabase{
-//         synchronized(AppDatabase::class.java){
-//             instance = buildDatabase(context)
-//         }
-//        return instance
-//    }
 }

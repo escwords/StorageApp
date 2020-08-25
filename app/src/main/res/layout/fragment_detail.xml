@@ -5,6 +5,10 @@
 
     <data>
 
+        <variable
+            name="detailModel"
+            type="com.words.storageapp.ui.detail.DetailViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,158 +20,134 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="10dp" />
+            app:layout_constraintGuide_begin="2dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="10dp" />
+            app:layout_constraintGuide_end="2dp" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView6"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/materialCardView4"
+            android:background="@color/primaryColor"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="#C1E1C2"
-            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-            app:layout_constraintStart_toStartOf="@+id/guideline_start"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/full_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:padding="5dp"
+                android:text="@{detailModel.userFullName}"
+                android:textAppearance="@style/TextAppearance.NameText"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/profileImage"
+                app:layout_constraintStart_toStartOf="@+id/profileImage"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Nnamani  Emmanuel" />
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="16dp"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profileImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/ic_status_avatar_default"
+                android:scaleType="centerCrop"
+                app:imgSrcUri="@{detailModel.imageUrl}"
+                app:layout_constraintEnd_toEndOf="@+id/materialCardView4"
+                app:layout_constraintStart_toStartOf="@+id/materialCardView4"
+                app:layout_constraintTop_toBottomOf="@+id/full_name"
+                tools:ignore="ContentDescription" />
 
-                    android:elevation="10dp"
-                    app:layout_constraintBottom_toTopOf="@+id/textView"
-                    app:layout_constraintEnd_toEndOf="@+id/textView"
-                    app:layout_constraintStart_toStartOf="@+id/textView"
-                    app:layout_constraintTop_toBottomOf="@+id/materialCardView4"
-                    app:srcCompat="@drawable/message__24dp" />
+            <ImageButton
+                android:id="@+id/msg_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:elevation="20dp"
+                style="@style/Widget.AppCompat.ImageButton"
+                android:background="@color/secondaryDarkColor"
+                app:layout_constraintBottom_toBottomOf="@+id/profileImage"
+                app:layout_constraintEnd_toStartOf="@+id/profileImage"
+                app:layout_constraintTop_toTopOf="@+id/profileImage"
+                app:srcCompat="@drawable/message__24dp"
+                tools:ignore="ContentDescription" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/full_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:padding="5dp"
-                    android:text="Nnamani Emmanuel"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <ImageButton
+                android:id="@+id/call_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:elevation="20dp"
+                style="@style/Widget.AppCompat.ImageButton"
+                android:background="@color/secondaryDarkColor"
+                app:layout_constraintBottom_toBottomOf="@+id/profileImage"
+                app:layout_constraintStart_toEndOf="@+id/profileImage"
+                app:layout_constraintTop_toTopOf="@+id/profileImage"
+                app:srcCompat="@drawable/call_24dp"
+                tools:ignore="ContentDescription" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/materialCardView4"
-                    android:layout_width="197dp"
-                    android:layout_height="188dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/skills">
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                app:layout_constraintBottom_toBottomOf="@+id/skills"
+                app:layout_constraintEnd_toStartOf="@+id/skills"
+                app:layout_constraintTop_toTopOf="@+id/skills"
+                app:srcCompat="@drawable/person_24dp"
+                tools:ignore="ContentDescription" />
 
-                    <ImageView
-                        android:id="@+id/profile_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/jetbrains" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/skills"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Plumber"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    app:layout_constraintEnd_toEndOf="@+id/full_name"
-                    app:layout_constraintStart_toStartOf="@+id/full_name"
-                    app:layout_constraintTop_toBottomOf="@+id/full_name" />
-
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:elevation="10dp"
-                    app:layout_constraintBottom_toTopOf="@+id/textView6"
-                    app:layout_constraintEnd_toEndOf="@+id/textView6"
-                    app:layout_constraintStart_toStartOf="@+id/textView6"
-                    app:srcCompat="@drawable/call_24dp" />
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/skills"
-                    app:layout_constraintEnd_toStartOf="@+id/skills"
-                    app:layout_constraintTop_toBottomOf="@+id/full_name"
-                    app:srcCompat="@drawable/person_24dp" />
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Message"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/textView6"
-                    app:layout_constraintStart_toStartOf="@+id/materialCardView4" />
-
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="50dp"
-                    android:text="call"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/textView"
-                    app:layout_constraintEnd_toEndOf="@+id/materialCardView4" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/skills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{detailModel.detailData.skills}"
+                android:textAppearance="@style/TextAppearance.NameText"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/profileImage"
+                app:layout_constraintStart_toStartOf="@+id/profileImage"
+                app:layout_constraintTop_toBottomOf="@+id/profileImage"
+                tools:text="Plumber" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/viewpager_tab"
+            android:id="@+id/myViewPagerTab"
             android:layout_width="0dp"
-            android:elevation="20dp"
             android:layout_height="wrap_content"
+            android:background="@color/secondaryColor"
+            app:tabSelectedTextColor="?attr/colorAccent"
+            app:tabIndicatorColor="?attr/colorAccent"
+            app:tabTextAppearance="@style/tabTitleText"
+            app:tabTextColor="@color/secondaryTextColor"
             app:layout_constraintEnd_toStartOf="@+id/guideline_end"
             app:layout_constraintStart_toStartOf="@+id/guideline_start"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardView6">
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView4">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Album" />
+                android:text="@string/albumText" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="About" />
+                android:text="@string/aboutText" />
         </com.google.android.material.tabs.TabLayout>
-
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toBottomOf="@+id/viewpager_tab"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@id/myViewPagerTab" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

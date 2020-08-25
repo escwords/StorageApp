@@ -7,22 +7,22 @@ import com.words.storageapp.database.model.LoggedInUser
 @Dao
 interface LoggedInUserDao {
 
-    @Query("SELECT * FROM logged_user")
+    @Query("SELECT *FROM logged_user")
     fun getUser(): LiveData<LoggedInUser>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(vararg user: LoggedInUser)
+    suspend fun insertUser(user: LoggedInUser)
 
-    @Delete
-    suspend fun deleteUser(vararg user: LoggedInUser)
+    @Query("DELETE FROM logged_user")
+    suspend fun deleteUser()
 
     @Transaction
-    suspend fun setUpAccount(user: LoggedInUser) {
-        deleteUser(user)
-        insertUser(user)
+    suspend fun setUpAccount(loggedInUser: LoggedInUser) {
+        deleteUser()
+        insertUser(loggedInUser)
     }
 
     @Update
-    suspend fun update(user: LoggedInUser)
+    suspend fun update(loggedInUser: LoggedInUser)
 
 }

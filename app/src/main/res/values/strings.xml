@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StorageApp</string>
+    <string name="app_name">Skills Hub</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -8,11 +8,14 @@
     <string name="sign_in">Login</string>
     <string name="register">Register</string>
     <string name="log_out">Logout</string>
+    <string name="tab_sign_in">Sign In</string>
+    <string name="tab_sign_up">Sign Up</string>
 
 
     <!--Defining database node name-->
-    <string name="db_node">users</string>
-
+    <string name="fireStore_node">skills</string>
+    <string name="db_node">skills</string>
+    <string name="messageHeader">Project::Skilled Hub \n </string>
     <string name="phone_number">Phone number</string>
     <string name="createProfile">Create Profile</string>
     <string name="submit">Submit</string>
@@ -45,7 +48,7 @@
     <string name="denied_permission_string">Enable your Location in Setting</string>
     <string name="ok">OK</string>
     <string name="settings">SETTINGS</string>
-    <string name="sign_out">Sign Out</string>
+    <string name="sign_out">Sign out</string>
 
     //fireStore String
     <string name="fireStore_name">Skills</string>
@@ -53,6 +56,25 @@
 
 
     <string name="add_work_image">Add Work Image</string>
+    <string name="search_query">Enter your search</string>
+    <string name="home">Home</string>
+    <string name="nearby">NearBy</string>
+    <string name="account">Account</string>
+    <string name="work">WokrManager</string>
+
+    <string name="album">Album</string>
+    <string name="about">About</string>
+    <string name="search_hint">Search Skills</string>
+    <string name="searchQuery">Search Skills</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="wage_factor">Wage</string>
+    <string name="amount_Formatter">₦%s</string>
+    <string name="i_don_t_have_account_create_account">I don\'t Have Account? Create Account</string>
+    <string name="login_text">Sign In</string>
+    <string name="aboutText">About</string>
+    <string name="albumText">Album</string>
+    <string name="settingsText">Settings</string>
+    <string name="no_internet_connection">No Internet Connection</string>
 
 
 </resources>

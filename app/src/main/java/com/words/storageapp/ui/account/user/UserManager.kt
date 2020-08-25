@@ -3,29 +3,33 @@ package com.words.storageapp.ui.account.user
 import android.location.Location
 import com.google.firebase.auth.FirebaseAuth
 import com.words.storageapp.di.Storage
+import com.words.storageapp.util.utilities.CurrentLocation
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class UserManager(
-    private val storage: Storage,
-    firebaseAuth: FirebaseAuth
+@Singleton
+class UserManager @Inject constructor(
+    private val storage: Storage
 ) {
-    val uid by lazy {
-        firebaseAuth.currentUser!!.uid
-    }
 
-    val uAddress: String = storage.getLocationProperty("Address")
+    //val uAddress: String = storage.getLocationProperty("Address")
     val uLongitude: Double? = storage.getLocationProperty("latitude").toDoubleOrNull()
     val uLatitude: Double? = storage.getLocationProperty("longitude").toDoubleOrNull()
-
+    val locationState: Boolean = storage.getLocationState("Status")
     // var locationMain: Location? = null
 
-    fun setUpLocation(location: Location) {
+    fun setUpLocation(location: CurrentLocation) {
         storage.setLocationProperty("latitude", location.latitude.toString())
         storage.setLocationProperty("longitude", location.longitude.toString())
         // locationMain = location
     }
 
-    fun setUpAddress(address: String) {
-        storage.setLocationProperty("Address", address)
+    fun setLocationState(value: Boolean) {
+        storage.setLocationState("Status", value)
     }
+
+//    fun setUpAddress(address: String) {
+//        storage.setLocationProperty("Address", address)
+//    }
 
 }

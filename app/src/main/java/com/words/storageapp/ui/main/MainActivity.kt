@@ -1,201 +1,177 @@
 package com.words.storageapp.ui.main
 
 import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
-import android.net.Uri
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings
-import android.text.TextUtils
-import android.view.Menu
-import android.view.MenuItem
+import android.os.Handler
+import android.os.ResultReceiver
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import androidx.core.content.getSystemService
+import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.words.storageapp.BuildConfig
 import com.words.storageapp.MyApplication
 import com.words.storageapp.R
+import com.words.storageapp.di.dagger.AppLevelComponent
 import com.words.storageapp.ui.account.user.UserManager
-import com.words.storageapp.ui.account.AccountActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.words.storageapp.util.utilities.ConnectivityChecker
+import com.words.storageapp.util.utilities.Constants
+import com.words.storageapp.util.utilities.CurrentLocation
+import com.words.storageapp.util.utilities.FetchAddressIntentService
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         const val REQUEST_LOCATION_CODE = 10930
+        const val ADDRESS_REQUESTED_KEY = "10323"
+        const val LOCATION_ADDRESS_KEY = "10343"
+        const val REQUEST_CHECK_SETTINGS = 10002
+        const val LOCATION_REQUESTED_KEY = "1245"
     }
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var userManager: UserManager
+    var connectivityChecker: ConnectivityChecker? = null
+    private var addressOutput: ArrayList<String>? = null
 
+    private lateinit var resultReceiver: AddressResultReceiver
+    lateinit var daggerAppLevelComponent: AppLevelComponent
+    private lateinit var navController: NavController
+
+    //this method initializes the main screen
     override fun onCreate(savedInstanceState: Bundle?) {
+        daggerAppLevelComponent = (application as MyApplication).daggerComponent
+        daggerAppLevelComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        firebaseAuth = FirebaseAuth.getInstance()
-        userManager = (application as MyApplication).appContainer.userManager
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        requestLocationPermission()
-    }
 
-    private fun checkLocationPermissionApproved() = ActivityCompat.checkSelfPermission(
-        this,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
+        resultReceiver = AddressResultReceiver(Handler())
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        navController = findNavController(R.id.mainNavHost)
 
-    private fun requestLocationPermission() {
-        val providePermission = checkLocationPermissionApproved()
+        setUpBottomNav(navController)
 
-        if (providePermission) {
-            Snackbar.make(
-                findViewById(R.id.parent_layout),
-                R.string.request_permission_string, Snackbar.LENGTH_LONG
-            )
-                .setAction("ok") {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-                        , REQUEST_LOCATION_CODE
-                    )
-                }.show()
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-                , REQUEST_LOCATION_CODE
-            )
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            REQUEST_LOCATION_CODE -> when {
-                grantResults.isEmpty() ->
-                    Timber.i("User Interaction was Cancelled")
-                grantResults[0] == PackageManager.PERMISSION_GRANTED ->
-                    retrieveUserLocation()
-            }
-            else -> {
-                Snackbar.make(
-                    findViewById(R.id.parent_layout),
-                    R.string.denied_permission_string,
-                    Snackbar.LENGTH_LONG
-                )
-                    .setAction(R.string.settings) {
-                        // Build intent that displays the App settings screen.
-                        navigateToSettings()
-                    }
-                    .show()
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.homeFragment || destination.id == R.id.profileFragment) {
+                bottomNav.visibility = View.VISIBLE
+            } else {
+                bottomNav.visibility = View.GONE
             }
         }
+        connectivityChecker = connectivityChecker(this)
     }
 
+
+    //we received the location here and perform an action on it
     private fun retrieveUserLocation() {
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener { task ->
-            if (task != null) {
-                initializeLocation(task)
+//        fusedLocationProviderClient.lastLocation.addOnSuccessListener(
+//            this,
+//            OnSuccessListener { location ->
+//                if (location == null) {
+//                    Timber.i("Location is Null")
+//                    return@OnSuccessListener
+//                }
+
+        //checking if GeoCoder is available
+//                if (!Geocoder.isPresent()) {
+//                    Timber.i("GeoCoder not available")
+//                    return@OnSuccessListener
+//                }
+
+        // currentLocation = CurrentLocation(longitude = location.longitude, latitude = location.latitude)
+        //if the user press reset buttons  it reset addressRequested to true
+        //calling the function the decode the address
+//                if (addressRequested) startIntentService()
+
+//            }).addOnFailureListener(this) { e ->
+//
+//            Timber.e(e, "Unable to fetch last location")
+//            //show navigate you to dialog that lead to setting screen
+//            //show error can't fetch location Error
+//            finish()
+//        }
+//    }
+    }
+
+//    private fun startIntentService(){
+//        val intent = Intent(this,FetchAddressIntentService::class.java).apply {
+//            putExtra(Constants.RECEIVER, resultReceiver)
+//            putExtra(Constants.LOCATION_DATA_EXTRA, lastLocation)
+//        }
+//        startService(intent)
+//    }
+
+
+    //Receiver for data sent from FetchAddressIntent Service
+    private inner class AddressResultReceiver internal constructor(
+        handler: Handler
+    ) : ResultReceiver(handler) {
+        //receives data sent from Fetch Address Intent Service and updates the ui
+        override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                // String cannot be cast to arraylist
+                addressOutput = resultData!!.getStringArrayList(Constants.RESULT_DATA_KEY)
+                Timber.i("Retrieved Address: $addressOutput")
+                //Display Address Dialog
             }
         }
-            .addOnFailureListener { exception ->
-                Timber.e(exception, "Failed to Fetch  last Location")
-                //navigate the user to settings screen to confirm location settings
-            }
     }
 
-    private fun initializeLocation(location: Location) {
-        userManager.setUpLocation(location)
-        val geoCoder: Geocoder = Geocoder(this, Locale.getDefault())
-
-        lifecycleScope.launch {
-            try {
-                val addresses = computeAddress(location, geoCoder)
-                if (addresses != null && addresses.isNotEmpty()) {
-                    parseAddress(addresses)
-                } else {
-                    Timber.i("Address is null")
-                }
-            } catch (e: Throwable) {
-                Timber.e(e, "Unable to fetch addresses")
-            }
-        }
-    }
-
-    private fun parseAddress(addresses: List<Address>) {
-        val parsedAddress = arrayListOf<String>()
-        val currentAddress = addresses[0]
-        for (i in 0..currentAddress.maxAddressLineIndex) {
-            parsedAddress.add(currentAddress.getAddressLine(i))
-        }
-        userManager.setUpAddress(TextUtils.join("\n", parsedAddress))
-    }
-
-    private suspend fun computeAddress(location: Location, geoCoder: Geocoder): List<Address>? {
-        return withContext(Dispatchers.Default) {
-            geoCoder.getFromLocation(location.latitude, location.longitude, 4)
-        }
-    }
-
-    private fun navigateToSettings() {
-        //this intent displays the app setting screen
-        val intent = Intent()
-        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-        val uri = Uri.fromParts(
-            "package",
-            BuildConfig.APPLICATION_ID,
-            null
+    //A generic snackBar
+    private fun showSnackBar(
+        snackStrId: Int,
+        actionStrId: Int,
+        listener: View.OnClickListener? = null
+    ) {
+        //replace snackBar context to R.id.parent_layout
+        val snackBar = Snackbar.make(
+            findViewById(R.id.parent_layout), getString(snackStrId),
+            Snackbar.LENGTH_INDEFINITE
         )
-        intent.data = uri
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.logout -> {
-                signOut()
-                true
-            }
-            R.id.account -> {
-                navigateToAccountScreen()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+        if (actionStrId != 0 && listener != null) {
+            snackBar.setAction(getString(actionStrId), listener)
         }
+        snackBar.show()
     }
 
-    private fun signOut() {
-        val user = firebaseAuth.currentUser
-        if (user != null) {
-            firebaseAuth.signOut()
-            Toast.makeText(applicationContext, "User has Signed Out", Toast.LENGTH_SHORT).show()
+    /***********************************************************************************************/
+
+
+    //setting up bottom navigation
+    private fun setUpBottomNav(navController: NavController) {
+        findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            .setupWithNavController(navController)
+    }
+
+    private fun connectivityChecker(activity: Activity): ConnectivityChecker? {
+        val connectivityManager = activity.getSystemService<ConnectivityManager>()
+        return if (connectivityManager != null) {
+            ConnectivityChecker(connectivityManager)
+        } else {
+            null
         }
-
-    }
-
-    private fun navigateToAccountScreen() {
-        val intent = Intent(this, AccountActivity::class.java)
-        startActivity(intent)
     }
 
     override fun onBackPressed() {
@@ -206,12 +182,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //we want to hide the logIn when user is already Logged in.
-    // hiding the menu item in the overflow menu
-    /*private fun setUpOverflowMenu(){
-        val user: FirebaseUser? = firebaseAuth.currentUser
-
-        if(user != null ){
-        }
-    }*/
+    fun hidekeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 }
+//if the location is off in the setting we navigate the user to setting screen to switch on the location
+//    private fun navigateToSettings() {
+//        //this intent displays the app setting screen
+//        val intent = Intent()
+//        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+//        val uri = Uri.fromParts(
+//            "package",
+//            APPLICATION_ID,
+//            null
+//        )
+//        intent.data = uri
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        startActivity(intent)
+//    }

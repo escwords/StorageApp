@@ -1,17 +1,26 @@
 package com.words.storageapp.util
 
-import com.words.storageapp.ui.account.user.UserManager
-import com.words.storageapp.ui.account.user.UserRepository
-import com.words.storageapp.ui.account.user.UserViewModel.Companion.UserViewModelFactory
-import com.words.storageapp.ui.account.createProfile.CreateViewModel.Companion.CreateViewModelFactory
+import com.words.storageapp.ui.detail.AlbumViewModel.Companion.AlbumViewModelFactory
+import com.words.storageapp.ui.detail.DetailViewModel.Companion.DetailViewModelFactory
+import com.words.storageapp.ui.search.SearchRepository
+import com.words.storageapp.ui.search.SearchViewModel.Companion.SearchViewModelFactory
 
 object InjectorUtil {
 
-    /*fun provideUserViewModelFactory(repository: UserRepository, userManager: UserManager): UserViewModelFactory {
-        return UserViewModelFactory(repository,userManager)
-    }*/
 
-    fun provideCreateViewModelFactory(repository: UserRepository): CreateViewModelFactory {
-        return CreateViewModelFactory(repository)
+    fun provideSearchViewModelFactory(repository: SearchRepository): SearchViewModelFactory {
+        return SearchViewModelFactory(repository)
     }
+
+    fun provideDetailViewModelFactory(
+        id: String,
+        repository: SearchRepository
+    ): DetailViewModelFactory {
+        return DetailViewModelFactory(id, repository)
+    }
+
+    fun provideAlbumViewModelFactory(): AlbumViewModelFactory {
+        return AlbumViewModelFactory()
+    }
+
 }

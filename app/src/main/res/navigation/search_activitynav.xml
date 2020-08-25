@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_activitynav"
+    app:startDestination="@id/resultFragment">
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.words.storageapp.ui.search.ResultFragment"
+        tools:layout="@layout/fragment_result">
+        <action
+            android:id="@+id/action_resultFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_resultFragment_to_skilledFragment"
+            app:destination="@id/skilledFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.words.storageapp.ui.detail.DetailFragment"
+        tools:layout="@layout/fragment_detail">
+        <action
+            android:id="@+id/action_detailFragment_to_photoDetail"
+            app:destination="@id/photoDetail" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoDetail"
+        android:name="com.words.storageapp.ui.detail.PhotoDetail"
+        android:label="fragment_photo_detail"
+        tools:layout="@layout/fragment_photo_detail" />
+    <fragment
+        android:id="@+id/skilledFragment"
+        android:name="com.words.storageapp.ui.detail.SkilledFragment"
+        android:label="SkilledFragment"
+        tools:layout="@layout/fragment_detail2" />
+</navigation>

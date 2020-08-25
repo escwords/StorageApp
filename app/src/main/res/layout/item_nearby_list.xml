@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="skill"
+            type="com.words.storageapp.domain.NearBySkill" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cardParentView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView7"
+            android:layout_width="90dp"
+            android:layout_height="100dp"
+            app:cardPreventCornerOverlap="false"
+            app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
+                app:srcCompat="@drawable/jetbrains" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/fullName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{skill.firstName}"
+            android:textAppearance="@style/TextAppearance.profileHeaderText"
+            app:layout_constraintEnd_toEndOf="@+id/materialCardView7"
+            app:layout_constraintStart_toStartOf="@+id/materialCardView7"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView7"
+            tools:text="Oba Obinna" />
+
+        <TextView
+            android:id="@+id/skillType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{skill.skillId}"
+            app:layout_constraintEnd_toEndOf="@+id/fullName"
+            android:textAppearance="@style/TextAppearance.profileHeaderText"
+            app:layout_constraintStart_toStartOf="@+id/fullName"
+            app:layout_constraintTop_toBottomOf="@+id/fullName"
+            tools:text="Plumber" />
+
+        <TextView
+            android:id="@+id/locality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{skill.locality}"
+            android:textAppearance="@style/TextAppearance.profileHeaderText"
+            app:layout_constraintEnd_toEndOf="@+id/skillType"
+            app:layout_constraintStart_toStartOf="@+id/skillType"
+            app:layout_constraintTop_toBottomOf="@+id/skillType"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="Iheaka" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
