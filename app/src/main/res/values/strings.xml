@@ -15,7 +15,7 @@
     <!--Defining database node name-->
     <string name="fireStore_node">skills</string>
     <string name="db_node">skills</string>
-    <string name="messageHeader">Project::Skilled Hub \n </string>
+    <string name="messageHeader">UNN::Skilled Hub \n\n </string>
     <string name="phone_number">Phone number</string>
     <string name="createProfile">Create Profile</string>
     <string name="submit">Submit</string>
@@ -64,8 +64,8 @@
 
     <string name="album">Album</string>
     <string name="about">About</string>
-    <string name="search_hint">Search Skills</string>
-    <string name="searchQuery">Search Skills</string>
+    <string name="search_hint">Search</string>
+    <string name="searchQuery">Search Locality or Skill</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="wage_factor">Wage</string>
     <string name="amount_Formatter">₦%s</string>
@@ -75,6 +75,21 @@
     <string name="albumText">Album</string>
     <string name="settingsText">Settings</string>
     <string name="no_internet_connection">No Internet Connection</string>
+    <string name="remove">Remove</string>
+    <string name="delete">Delete</string>
+    <string name="news_feed_menu">News Feed</string>
+    <string name="account_menu">Account</string>
+    <string name="about_menu">About</string>
+    <string name="query_text">query</string>
+
+
+    //firebase database string
+    <string name="clients">clients</string>
+    <string name="address_list">Select Address</string>
+    <string name="onBoardingOne_body">Get the skills within your vicinity with no stress, and also search skill within a locality with Skill Hub</string>
+    <string name="onBoardingOne_title">Welcome to SkillHub</string>
+    <string name="onBoardingTwo_title">Evaluate Skill labour</string>
+    <string name="onBoardingTwo_body">Skill Hub let you evaluate self skill at your convenient, it provides you with skilled service at a standard charge rate</string>
 
 
 </resources>

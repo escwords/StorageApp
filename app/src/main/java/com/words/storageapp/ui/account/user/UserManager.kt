@@ -1,9 +1,8 @@
 package com.words.storageapp.ui.account.user
 
 import android.location.Location
-import com.google.firebase.auth.FirebaseAuth
 import com.words.storageapp.di.Storage
-import com.words.storageapp.util.utilities.CurrentLocation
+import com.words.storageapp.util.CurrentLocation
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,9 +26,5 @@ class UserManager @Inject constructor(
     fun setLocationState(value: Boolean) {
         storage.setLocationState("Status", value)
     }
-
-//    fun setUpAddress(address: String) {
-//        storage.setLocationProperty("Address", address)
-//    }
 
 }

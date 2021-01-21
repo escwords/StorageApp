@@ -17,7 +17,7 @@ import com.words.storageapp.databinding.FragmentDetailBinding
 import com.words.storageapp.ui.search.SearchRepository
 import com.words.storageapp.ui.search.SearchResultActivity
 import com.words.storageapp.util.InjectorUtil
-import com.words.storageapp.util.utilities.USERID
+import com.words.storageapp.util.USERID
 import timber.log.Timber
 
 class DetailFragment : Fragment(), View.OnClickListener {

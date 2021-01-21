@@ -5,16 +5,14 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.SearchRecentSuggestions
 import android.view.Menu
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
 import com.words.storageapp.MyApplication
 import com.words.storageapp.R
 import com.words.storageapp.util.InjectorUtil
@@ -50,8 +48,6 @@ class SearchResultActivity : AppCompatActivity() {
                 actionBar.visibility = View.VISIBLE
             }
         }
-        //actionBar.setupWithNavController(navController)
-
         setSupportActionBar(actionBar)
         handleIntent(intent)
     }
@@ -64,12 +60,11 @@ class SearchResultActivity : AppCompatActivity() {
 
     private fun handleIntent(intent: Intent) {
         if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            //use the query to search your data
-            lifecycleScope.launch {
-                query?.let { string ->
+            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+
+                lifecycleScope.launch {
                     // resultTitle.text = it
-                    searchViewModel.queryDb(string)
+                    searchViewModel.queryDb(query)
                 }
             }
         }
@@ -79,11 +74,10 @@ class SearchResultActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.search_menu, menu)
         //get the search view and set the searchable configuration
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        (menu.findItem(R.id.search).actionView as SearchView).apply {
+        (menu.findItem(R.id.search_action).actionView as SearchView).apply {
             //assumes that the current activity is the searchable activity
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             setIconifiedByDefault(false)
-            background = getDrawable(R.drawable.rectangle_shape)
             queryHint = context.getString(R.string.searchQuery)
             isSubmitButtonEnabled = true
         }

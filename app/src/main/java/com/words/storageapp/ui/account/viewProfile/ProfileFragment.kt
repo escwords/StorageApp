@@ -2,38 +2,59 @@ package com.words.storageapp.ui.account.viewProfile
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.room.Database
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.words.storageapp.R
+import com.words.storageapp.databinding.FragmentLabourerProfileBinding
 import com.words.storageapp.databinding.FragmentProfile2Binding
+import com.words.storageapp.di.SharedPreference_Factory
 import com.words.storageapp.domain.Photo
+import com.words.storageapp.domain.RegisterUser
+import com.words.storageapp.domain.toLoggedInUser
 import com.words.storageapp.ui.main.MainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class ProfileFragment : Fragment(), View.OnClickListener {
+class ProfileFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var fireStore: FirebaseFirestore
-    private lateinit var collectionRef: CollectionReference
+
+    private lateinit var fireDatabase: DatabaseReference
+    private lateinit var documentRef: DatabaseReference
+    private lateinit var dataListener: ValueEventListener
+    private lateinit var sharePref: SharedPreferences
+
 
     @Inject
     lateinit var profileViewModel: ProfileViewModel
 
-    private lateinit var progressTop: ProgressBar
     private lateinit var toolbar: MaterialToolbar
     private lateinit var warningDialog: AlertDialog
 
@@ -42,9 +63,12 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         firebaseAuth = FirebaseAuth.getInstance()
         fireStore = FirebaseFirestore.getInstance()
         val userId = firebaseAuth.currentUser!!.uid
-        collectionRef = fireStore.collection(getString(R.string.db_node)).document(userId)
-            .collection("photos")
-        Timber.i("userId:$userId")
+        sharePref = (activity as MainActivity).sharedPref
+        setUpDataListener()
+
+        fireDatabase = Firebase.database.reference
+        documentRef = fireDatabase.child("skills").child(userId)
+        documentRef.addValueEventListener(dataListener)
     }
 
     override fun onCreateView(
@@ -52,19 +76,13 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentProfile2Binding.inflate(inflater, container, false).apply {
+        val binding = FragmentLabourerProfileBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = viewLifecycleOwner
             executePendingBindings()
         }
-        progressTop = binding.progressTop
         toolbar = binding.actionBar
-        binding.profile = profileViewModel
+        binding.viewModel = profileViewModel
 
-        profileViewModel.userData.observe(viewLifecycleOwner, Observer { data ->
-            if (data == null) {
-                Timber.i("User data is empty")
-            }
-        })
 
         profileViewModel.isAcctActive.observe(viewLifecycleOwner, Observer { active ->
             active.getContentIfNotHandled()?.let {
@@ -74,28 +92,21 @@ class ProfileFragment : Fragment(), View.OnClickListener {
             }
         })
 
-        binding.profilePics.setOnClickListener { view ->
-            view.findNavController().navigate(R.id.action_profileFragment_to_profileImageFragment)
-            Timber.i("image icon clicked")
+        binding.changeIconBtn.setOnClickListener { view ->
+            view.findNavController().navigate(R.id.profileImageFragment)
         }
 
-        binding.contactDetail.setOnClickListener { view ->
-            val action = R.id.action_profileFragment_to_profileImageFragment
-            view.findNavController().navigate(action)
+        binding.editProfileBtn.setOnClickListener { view ->
+            view.findNavController().navigate(R.id.profileImageFragment)
         }
 
         //click listener that takes you to work album
-        binding.skillDetail.setOnClickListener { view ->
-            view.findNavController().navigate(R.id.action_profileFragment_to_editAlbumFragment)
+        binding.worksBtn.setOnClickListener { view ->
+            view.findNavController().navigate(R.id.editAlbumFragment)
         }
 
-        binding.notification.setOnClickListener { view ->
-            view.findNavController().navigate(R.id.action_profileFragment_to_notificationFragment)
-
-        }
-
-        binding.settings.setOnClickListener { view ->
-            view.findNavController().navigate(R.id.action_profileFragment_to_configureFragment)
+        binding.settingBtn.setOnClickListener { view ->
+            view.findNavController().navigate(R.id.configureFragment)
         }
 
         toolbar.setOnMenuItemClickListener { menuItem ->
@@ -117,38 +128,40 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         (activity as MainActivity).daggerAppLevelComponent.inject(this)
     }
 
-    /*private fun initializePhotoData() {
+    override fun onStop() {
+        super.onStop()
+        documentRef.removeEventListener(dataListener)
+    }
 
-        val photos = mutableListOf<Photo>()
+    private fun setUpDataListener() {
+        dataListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val updateDb = sharePref.getBoolean(
+                    "UPDATE",
+                    false
+                ) //variable boolean value to tell when data need update
 
-        collectionRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                task.result?.let { documents ->
-                    Timber.i("returning photos")
-                    documents.forEach { document ->
-                        Timber.i("Am inside for each loop")
-                        val photo = document.toObject(Photo::class.java)
-                        photos.add(photo)
-                        Timber.i("photoList: $photo")
+                val data = snapshot.getValue(RegisterUser::class.java)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    if (!updateDb) {
+                        profileViewModel.initializeAccount(data!!.toLoggedInUser())
+                        cachedFirstData()
+                    } else {
+                        profileViewModel.updateAccount(data!!.toLoggedInUser())
                     }
-                    Timber.i("List photos: $photos")
                 }
-                Timber.i("List photos: $photos")
+            }
 
-            } else {
-                Timber.i("Error fetching photos: ${task.exception}")
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
             }
         }
-    }*/
+    }
 
-
-    @SuppressLint("UseRequireInsteadOfGet")
-    override fun onClick(view: View?) {
-        when (view!!.id) {
-            R.id.profilePics -> {
-                val action = R.id.action_profileFragment_to_profileImageFragment
-                view.findNavController().navigate(action)
-            }
+    private fun cachedFirstData() {
+        with(sharePref.edit()) {
+            putBoolean("UPDATE", true)
+            commit()
         }
     }
 
@@ -165,6 +178,5 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         }
         warningDialog.show()
     }
-
 
 }

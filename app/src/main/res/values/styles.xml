@@ -4,28 +4,26 @@
     <style name="Theme.SkillHub" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorOnPrimary">@color/primaryTextColor</item>
-        <item name="colorPrimaryDark">@color/primaryColor</item>
-        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorOnPrimary">@color/blue_900</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorSecondary">@color/primaryColor</item>
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
-        <item name="colorSecondaryVariant">@color/primaryTextColor</item>
         <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
 
         <item name="colorPrimarySurface">@color/primaryColor</item>
-        <item name="colorOnPrimarySurface">@color/primaryTextColor</item>
+        <item name="colorOnPrimarySurface">@color/primaryDarkColor</item>
 
-        <item name="colorSurface">@color/secondaryColor</item>
-        <item name="colorOnSurface">@color/secondaryTextColor</item>
-        <item name="colorAccent">@color/primaryDarkColor</item>
-        <item name="colorError">@color/secondaryDarkColor</item>
+        <item name="colorSurface">@color/primaryDarkColor</item>
+        <item name="colorOnSurface">@color/colorWhite</item>
+        <item name="colorAccent">@color/blue_700</item>
+        <item name="colorError">@color/colorRed</item>
         <item name="colorOnError">@color/primaryTextColor</item>
-        <item name="android:fontFamily">@font/roboto_mono</item>
-
+        <item name="android:fontFamily">@font/open_san_light</item>
+        <item name="colorControlNormal">@color/blue_900</item>
         <item name="materialCardViewStyle">@style/myCustomCardView</item>
         <item name="bottomNavigationStyle">@style/bottomNav</item>
-        <!--        <item name="tint">@color/secondaryDarkColor</item>-->
-        <!--        <item name="icon">@color/secondaryDarkColor</item>-->
         <item name="textAppearanceHeadline6">@style/subHeader</item>
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
     </style>
 
     <!--    Styling bottom Navigation here using theme overlay-->
@@ -50,8 +48,19 @@
     <style name="Widget.materialComponent.TopBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
 
     </style>
-
     <!--    End of styling top app bar -->
+
+    <style name="Widget.App.onSurfaceText" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorOnPrimary</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+
+    <style name="Widget.App.profileCard" parent="Widget.MaterialComponents.CardView">
+        <item name="cardElevation">10dp</item>
+        <item name="cardCornerRadius">10dp</item>
+        <item name="backgroundTint">@color/primaryDarkColor</item>
+    </style>
 
     <style name="MyBottomNavShape" parent="ShapeAppearance.MaterialComponents.LargeComponent">
         <item name="cornerFamilyTopLeft">cut</item>
@@ -147,6 +156,7 @@
     <style name="TextAppearance.profileTitle" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/blue_900</item>
         <item name="android:fontFamily">@font/roboto_mono_bold</item>
     </style>
     <!--End of styling profile fragment-->
@@ -155,14 +165,12 @@
         <item name="borderWidth">4dp</item>
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">18dp</item>
-        <item name="materialThemeOverlay">@style/ThemeOverlay.MyCardView</item>
     </style>
-
-    <style name="ThemeOverlay.MyCardView" parent=""></style>
 
     //End configuring profile Screen
 
     <style name="MainText" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/secondaryTextColor</item>
     </style>
 
@@ -170,5 +178,18 @@
         <item name="background">@drawable/rectangle_shape</item>
     </style>
 
+
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.TextInput</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.MaterialComponents.SmallComponent</item>
+        <item name="hintTextColor">?attr/colorOnSurface</item>
+        <item name="boxStrokeColor">@color/blue_700</item>
+    </style>
+
+    <style name="ThemeOverlay.App.TextInput" parent="">
+        <item name="android:colorPrimary">@color/blue_700</item>
+        <item name="colorOnSurface">@color/colorOnPrimary</item>
+        <item name="colorError">@color/colorRed</item>
+    </style>
 
 </resources>

@@ -25,14 +25,13 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/email_textLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
             android:hint="@string/email_hintText"
-            app:boxStrokeColor="@color/primaryColor"
+            app:boxStrokeColor="@color/blue_900"
             app:layout_constraintEnd_toStartOf="@+id/guideline_end"
             app:layout_constraintStart_toStartOf="@+id/guideline_start"
             app:layout_constraintTop_toTopOf="parent">
@@ -41,20 +40,21 @@
                 android:id="@+id/lgEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/email_hintText"
+                android:textColorHint="@color/transparentBlack"
                 android:inputType="textEmailAddress"
                 android:textSize="15sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/password_textLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             android:hint="@string/password_hintText"
-            app:boxStrokeColor="@color/primaryColor"
+            app:boxStrokeColor="@color/blue_900"
             app:layout_constraintEnd_toStartOf="@+id/guideline_end"
             app:layout_constraintStart_toStartOf="@+id/guideline_start"
             app:layout_constraintTop_toBottomOf="@id/email_textLayout">
@@ -63,6 +63,8 @@
                 android:id="@+id/lgPass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/password_hintText"
+                android:textColorHint="@color/transparentBlack"
                 android:inputType="textEmailAddress"
                 android:textSize="15sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -73,6 +75,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/login_text"
+            android:textColor="@color/colorWhite"
+            android:backgroundTint="@color/blue_900"
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="@+id/password_textLayout"
             app:layout_constraintStart_toStartOf="@+id/password_textLayout"
@@ -85,6 +89,7 @@
             android:layout_height="20dp"
             android:layout_marginTop="32dp"
             android:visibility="invisible"
+            android:backgroundTint="@color/blue_900"
             app:layout_constraintEnd_toEndOf="@+id/login"
             app:layout_constraintStart_toStartOf="@+id/login"
             app:layout_constraintTop_toBottomOf="@+id/login" />
@@ -99,7 +104,8 @@
             app:layout_constraintStart_toStartOf="@+id/login"
             app:layout_constraintTop_toBottomOf="@+id/loginProgress"
             app:srcCompat="@drawable/ic_cloud_off_"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            app:tint="@color/blue_900" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

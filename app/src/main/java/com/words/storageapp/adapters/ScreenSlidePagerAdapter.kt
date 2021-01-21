@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.words.storageapp.ui.detail.AboutFragment
 import com.words.storageapp.ui.detail.AlbumFragment
-import com.words.storageapp.util.utilities.USERID
+import com.words.storageapp.util.USERID
 
 class ScreenSlidePagerAdapter(fa: Fragment, skillId: String) : FragmentStateAdapter(fa) {
 

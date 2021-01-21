@@ -4,16 +4,26 @@
     <item
         android:id="@+id/homeFragment"
         android:title="@string/home"
-        android:icon="@drawable/ic_home_white_48dp"
+        android:icon="@drawable/ic_round_home"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/nearByFragment"
+        android:title="NearBy"
+        android:icon="@drawable/ic_nearby"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/preferenceFragment"
+        android:title="Preference"
+        android:icon="@drawable/ic_preference"
         app:showAsAction="always" />
     <item
         android:id="@+id/authFragment"
-        android:title="Account"
-        android:icon="@drawable/ic_perm_identity_white_48dp"
+        android:title="@string/account_menu"
+        android:icon="@drawable/ic_round_person"
         app:showAsAction="always" />
     <item
         android:id="@+id/aboutFragment"
-        android:icon="@drawable/ic_error_outline_white_48dp"
-        android:title="About"
+        android:icon="@drawable/ic_round_info"
+        android:title="@string/about_menu"
         app:showAsAction="always" />
 </menu>

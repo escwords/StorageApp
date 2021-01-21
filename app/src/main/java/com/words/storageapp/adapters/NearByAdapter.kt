@@ -2,17 +2,11 @@ package com.words.storageapp.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.toObject
-import com.words.storageapp.R
-import com.words.storageapp.database.model.MiniWokrData
 import com.words.storageapp.databinding.ItemNearbyListBinding
 import com.words.storageapp.domain.NearBySkill
-import com.words.storageapp.domain.RegisterUser
 
 class NearByAdapter(val query: Query) : FirestoreAdapter<NearByAdapter.NearByViewHolder>(query) {
 
@@ -28,10 +22,6 @@ class NearByAdapter(val query: Query) : FirestoreAdapter<NearByAdapter.NearByVie
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(snapshot: DocumentSnapshot) {
-            val skill = snapshot.toObject(NearBySkill::class.java)
-            binding.skill = skill
-            binding.executePendingBindings()
-
         }
 
         companion object {

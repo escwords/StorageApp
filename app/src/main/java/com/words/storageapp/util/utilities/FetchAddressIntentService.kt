@@ -6,13 +6,12 @@ import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.ResultReceiver
 import android.os.Bundle
+import android.os.ResultReceiver
+import com.words.storageapp.util.Constants
 import timber.log.Timber
 import java.io.IOException
-import java.lang.IllegalArgumentException
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class FetchAddressIntentService : IntentService("FetchAddress") {
@@ -21,7 +20,9 @@ class FetchAddressIntentService : IntentService("FetchAddress") {
 
     @SuppressLint("TimberExceptionLogging")
     override fun onHandleIntent(intent: Intent?) {
-        val errorMessage = arrayListOf<String>()
+
+        var errorMessage = ""
+
         receiver = intent?.getParcelableExtra(Constants.RECEIVER)
 
         if (intent == null || receiver == null) {
@@ -32,66 +33,91 @@ class FetchAddressIntentService : IntentService("FetchAddress") {
         val location = intent.getParcelableExtra<Location>(Constants.LOCATION_DATA_EXTRA)
 
         if (location == null) {
-            errorMessage[0] = "no location data provider"
-            deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage)
+            errorMessage = "no location data provided"
+            deliverResultToReceiver(
+                Constants.FAILURE_RESULT,
+                arrayListOf(errorMessage), arrayListOf(errorMessage)
+            )
             return
         }
 
         val geoCoder = Geocoder(this, Locale.getDefault())
-
         var addresses: List<Address> = emptyList()
 
         try {
             addresses = geoCoder.getFromLocation(
                 location.latitude,
                 location.longitude,
-                5
+                4
             )
         } catch (ioException: IOException) {
             //catch network or other I/O problems.
-            errorMessage[0] = "Service not Available"
-            Timber.e(ioException, errorMessage[0])
+            errorMessage = "Service not Available"
+            Timber.e(ioException, errorMessage)
         } catch (illegalArgumentException: IllegalArgumentException) {
             //catch invalid latitude or longitude
-            errorMessage.add(" Invalid latitude and Longitude")
-            Timber.e(illegalArgumentException, errorMessage[0])
+            errorMessage = "Invalid latitude and Longitude"
+            Timber.e(illegalArgumentException, errorMessage)
         }
 
         //handle where no address is found
         if (addresses.isEmpty()) {
             if (errorMessage.isEmpty()) {
-                errorMessage[0] = "No address found"
+                errorMessage = "No address found"
             }
-            deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage)
+            deliverResultToReceiver(
+                Constants.FAILURE_RESULT, arrayListOf(errorMessage),
+                arrayListOf(errorMessage)
+            )
 
         } else {
-//            val address  = addresses[0]
-//            val addressFragments = with(address){
-//                (0..maxAddressLineIndex).map {
-//                    getAddressLine(it) }
-//            }
 
-            val finalAddress = arrayListOf<String>()
+            val addressCodes = addresses
+            val addressList = arrayListOf<String>()
+            val localityList = arrayListOf<String>()
 
-            val address = addresses
-            for (ad in address) {
-                val resultAddress = with(ad) {
+            addressCodes.forEach { addressCode ->
+                val resultAddress = with(addressCode) {
                     (0..maxAddressLineIndex).map { getAddressLine(it) }
                 }
-                finalAddress.add(resultAddress.joinToString("\n"))
+                addressList.add(resultAddress.joinToString(separator = "\n"))
             }
-            Timber.i("Address Found")
+
+//            for (i in 0..addressCodes[0].maxAddressLineIndex) {
+//                localityList.add(addressCodes[0].locality)
+//            }
+
+//            addressCodes.forEach { addressCode ->
+//                val resultAddress = with(addressCode) {
+//                    (0..maxAddressLineIndex).map { locality }
+//                }
+//                localityList.add(resultAddress.joinToString(separator = "\n"))
+//            }
+
+
+            val resultAddress = with(addressCodes[0]) {
+                (0..maxAddressLineIndex).map { locality }
+            }
+            localityList.add(resultAddress.joinToString(separator = "\n"))
+
+
+            Timber.i("Address Found: $addressList")
             deliverResultToReceiver(
                 Constants.SUCCESS_RESULT,
-                finalAddress
+                addressList,
+                localityList
             )
         }
     }
 
-    private fun deliverResultToReceiver(resultCode: Int, message: ArrayList<String>) {
-        val bundle = Bundle().apply { putStringArrayList(Constants.RESULT_DATA_KEY, message) }
-        receiver?.send(resultCode, bundle)
+    private fun deliverResultToReceiver(
+        resultCode: Int, addresses: ArrayList<String>,
+        locality: ArrayList<String>
+    ) {
+        val bundle1 = Bundle().apply { putStringArrayList(Constants.RESULT_DATA_KEY, addresses) }
+        val bundle2 = Bundle().apply { putStringArrayList(Constants.RESULT_LOCALITY, locality) }
+        receiver?.send(resultCode, bundle1)
+        receiver?.send(resultCode, bundle2)
     }
-
 
 }

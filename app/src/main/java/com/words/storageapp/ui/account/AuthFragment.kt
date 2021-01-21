@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -16,12 +17,15 @@ import com.words.storageapp.adapters.AuthPagerAdapter
 import com.words.storageapp.adapters.AuthPagerAdapter.Companion.SIGN_IN_INDEX
 import com.words.storageapp.adapters.AuthPagerAdapter.Companion.SIGN_OUT_INDEX
 import com.words.storageapp.databinding.FragmentAuthBinding
+import com.words.storageapp.ui.main.MainActivity
+import com.words.storageapp.util.AccountType
+import com.words.storageapp.util.CLIENT
+import com.words.storageapp.util.LABOURER
 
 class AuthFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var fireStore: FirebaseFirestore
-    private lateinit var documentRef: DocumentReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +56,12 @@ class AuthFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val user = firebaseAuth.currentUser
-        user?.uid?.let {
-            val action = R.id.action_authFragment_to_profileFragment
-            view.findNavController().navigate(action)
+    override fun onStart() {
+        super.onStart()
+        val sharedPref = (activity as MainActivity).sharedPref
+        val currentUser = firebaseAuth.currentUser?.uid
+        currentUser?.let {
+            findNavController().navigate(R.id.profileFragment)
         }
     }
 
@@ -68,5 +72,4 @@ class AuthFragment : Fragment() {
             else -> null
         }
     }
-
 }

@@ -1,15 +1,15 @@
 package com.words.storageapp.work
 
 import android.content.Context
-import android.util.Log
+import android.widget.Toast
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.words.storageapp.database.AppDatabase
-import com.words.storageapp.database.model.WokrData
-import com.words.storageapp.util.utilities.SKILLS_JSON_DATA
+import com.words.storageapp.database.model.AllSkillsDbModel
+import com.words.storageapp.util.SKILLS_JSON_DATA
 import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 
@@ -22,12 +22,12 @@ class SeedDatabaseWorker(
         try {
             applicationContext.assets.open(SKILLS_JSON_DATA).use { inputStream ->
                 JsonReader(inputStream.reader()).use { jsonReader ->
-                    val skillsType = object : TypeToken<List<WokrData>>() {}.type
-                    val skillList: List<WokrData> = Gson().fromJson(jsonReader, skillsType)
+                    val skillsType = object : TypeToken<List<AllSkillsDbModel>>() {}.type
+                    val skillList: List<AllSkillsDbModel> = Gson().fromJson(jsonReader, skillsType)
 
                     val database = AppDatabase.getInstance(applicationContext)
-                    database.wokrDataDao().insertAll(skillList)
-
+                    database.allSkillsDbDao().insertAll(skillList)
+                    Timber.i("Database seeding was successful \n $skillList")
                     Result.success()
                 }
             }

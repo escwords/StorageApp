@@ -7,11 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -19,9 +15,7 @@ import com.words.storageapp.R
 import com.words.storageapp.adapters.ResultListAdapter
 import com.words.storageapp.adapters.ResultListAdapter.*
 import com.words.storageapp.databinding.FragmentResultBinding
-import com.words.storageapp.ui.detail.DetailFragment
-import com.words.storageapp.util.utilities.USERID
-import timber.log.Timber
+import com.words.storageapp.util.USERID
 
 class ResultFragment : Fragment() {
 
@@ -46,7 +40,6 @@ class ResultFragment : Fragment() {
         val viewModel = (activity as SearchResultActivity).searchViewModel
 
         val adapter = ResultListAdapter(ClickListener { skill ->
-
             val bundle =
                 bundleOf(USERID to skill.id) //call trimIndex on skillId before passing to detail or skilledFragment
             val action = R.id.action_resultFragment_to_skilledFragment
@@ -60,7 +53,6 @@ class ResultFragment : Fragment() {
         })
 
         viewModel.skills.observe(viewLifecycleOwner, Observer { result ->
-            showProgressBar()
             if (result.isEmpty()) {
                 //Define a loading Animated icon here
                 noResult.visibility = View.VISIBLE

@@ -2,10 +2,11 @@ package com.words.storageapp.util
 
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.words.storageapp.R
+import com.words.storageapp.R.drawable.*
 
 @BindingAdapter("imgSrcUri")
 fun ImageView.convertUriToImage(imageUrl: String?) {
@@ -13,6 +14,7 @@ fun ImageView.convertUriToImage(imageUrl: String?) {
         //val uri = it.toUri().buildUpon().scheme("https").build()
         Glide.with(this.context)
             .load(imageUrl)
+            .apply(RequestOptions().placeholder(animated_loading).error(broken_img))
             .into(this)
     }
     // apply(RequestOptions().placeholder(loading_animation).error(R.drawable.ic_broken_image)

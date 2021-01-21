@@ -29,14 +29,4 @@ abstract class DataStorageModule {
         fun provideAppDatabase(context: Context): AppDatabase = AppDatabase.getInstance(context)
     }
 
-//    @Provides
-//    fun connectivityChecker(activity: MainActivity): ConnectivityChecker? {
-//        val connectivityManager = activity.getSystemService<ConnectivityManager>()
-//        return if (connectivityManager != null) {
-//            ConnectivityChecker(connectivityManager)
-//        } else {
-//            null
-//        }
-//    }
-
 }

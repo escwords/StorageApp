@@ -2,12 +2,12 @@ package com.words.storageapp.domain
 
 import com.google.firebase.firestore.IgnoreExtraProperties
 import com.google.firebase.firestore.ServerTimestamp
-import com.words.storageapp.database.model.LoggedInUser
-import com.words.storageapp.database.model.WokrData
+import com.words.storageapp.database.model.LabourerDbModel
+import com.words.storageapp.database.model.AllSkillsDbModel
 import java.util.*
 
-fun RegisterUser.toLoggedInUser(): LoggedInUser {
-    return LoggedInUser(
+fun RegisterUser.toLoggedInUser(): LabourerDbModel {
+    return LabourerDbModel(
         id = skillId ?: "",
         first_name = firstName,
         last_name = lastName,
@@ -24,14 +24,15 @@ fun RegisterUser.toLoggedInUser(): LoggedInUser {
         wageRate = wageRate,
         skills = skills,
         experience = experience,
-        serviceOffered1 = serviceOffered1,
+        serviceOffered1 = serviceOffered,
         serviceOffered2 = serviceOffered2,
         date_joined = date_joined
     )
 }
 
-fun RegisterUser.toWokrData(): WokrData {
-    return WokrData(
+
+fun RegisterUser.toWokrData(): AllSkillsDbModel {
+    return AllSkillsDbModel(
         id = skillId,
         firstName = this.firstName,
         lastName = lastName,
@@ -41,20 +42,16 @@ fun RegisterUser.toWokrData(): WokrData {
         experience = experience,
         education = education,
         accountActive = accountActive,
-        dob = dob,
         gender = gender,
         charges = wageRate,
-        nationality = null,
         imageUrl = imageUrl,
         skillId = skillId,
-        serviceOffered1 = serviceOffered1,
-        serviceOffered2 = serviceOffered2,
+        serviceOffered1 = serviceOffered,
         date = date_joined.toString(),
-        coordinate = null,
-        state = state,
+        latitude = latitude,
+        longitude = longitude,
         locality = locality,
-        skills = skills,
-        lga = lga
+        skills = skills
     )
 }
 
@@ -64,6 +61,7 @@ data class RegisterUser(
     var address: String? = null,
     var accountStatus: Int? = null,
     var accountInfo: String? = null,
+    var accountType: String? = null,
     @ServerTimestamp var date_joined: Date? = null,
     var dob: String? = null,
     var education: String? = null,
@@ -77,12 +75,14 @@ data class RegisterUser(
     var lga: String? = null,
     var locality: String? = null,
     var phone: String? = null,
-    var serviceOffered1: String? = null, // this field contains more of what the user can do
+    var serviceOffered: String? = null, // this field contains more of what the user can do
     var serviceOffered2: String? = null,
     var skillId: String? = null,
     var skills: String? = null,
     var state: String? = null,
-    var wageRate: String? = null
+    var wageRate: String? = null,
+    var latitude: String? = null,
+    var longitude: String? = null
 )
 
 @IgnoreExtraProperties
@@ -99,7 +99,6 @@ data class Photo(
     var photoUrl: String? = null,
     var userId: String? = null,
     @ServerTimestamp var uploadTime: Date? = null
-
 )
 
 @IgnoreExtraProperties

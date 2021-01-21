@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
@@ -20,8 +19,7 @@ import com.words.storageapp.adapters.PhotosAdapter
 import com.words.storageapp.databinding.FragmentAlbumBinding
 import com.words.storageapp.domain.Photo
 import com.words.storageapp.util.InjectorUtil
-import com.words.storageapp.util.utilities.USERID
-import kotlinx.android.synthetic.main.fragment_album.*
+import com.words.storageapp.util.USERID
 import timber.log.Timber
 
 

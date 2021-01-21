@@ -1,6 +1,5 @@
 package com.words.storageapp.ui.account.viewProfile
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -14,20 +13,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
 import com.words.storageapp.R
-import com.words.storageapp.adapters.PhotosAdapter
+import com.words.storageapp.adapters.DeleteClickListener
+import com.words.storageapp.adapters.EditPhotoListAdapter
 import com.words.storageapp.databinding.FragmentEditAlbumBinding
 import com.words.storageapp.domain.Photo
 import kotlinx.coroutines.Dispatchers
@@ -37,16 +46,13 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 
-/**
- * A simple [Fragment] subclass.
- */
+
 class EditAlbumFragment : Fragment() {
 
     companion object {
         const val MEMORY_REQUEST_CODE = 110
-        const val REQUEST_PERMISSION_CODE = 1248
         const val MB = 1000000.0
-        const val MB_THRESHOLD = 0.47
+//        const val MB_THRESHOLD = 0.47
     }
 
     private lateinit var firebaseAuth: FirebaseAuth
@@ -54,9 +60,18 @@ class EditAlbumFragment : Fragment() {
     private lateinit var collectionRef: CollectionReference
     private lateinit var registration: ListenerRegistration
     private lateinit var imageProg: ProgressBar
-    private lateinit var adapter: PhotosAdapter
+    private lateinit var noResult: ImageView
+    private lateinit var adapter: EditPhotoListAdapter
     private lateinit var recyclerView: RecyclerView
 
+
+    //firebase database
+    private lateinit var firebaseDatabase: DatabaseReference
+    private lateinit var collectionReference: DatabaseReference
+    private lateinit var dataListener: ValueEventListener
+
+    private val list = MutableLiveData<List<Photo>>()
+    private val listData: MutableList<Photo> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,9 +80,17 @@ class EditAlbumFragment : Fragment() {
 
         val userId = firebaseAuth.currentUser!!.uid
 
+        firebaseDatabase = Firebase.database.reference
+        collectionReference = firebaseDatabase.child("skills")
+            .child(userId).child("works")
+
+        setUpDataListener()
+
         collectionRef = firebaseFirestore.collection(getString(R.string.db_node))
             .document(userId).collection("photos")
         Timber.i("userId:$userId")
+
+        collectionReference.addValueEventListener(dataListener)
     }
 
 
@@ -80,16 +103,37 @@ class EditAlbumFragment : Fragment() {
         binding.addImage.setOnClickListener { openMemoryIntent() }
         imageProg = binding.imageProgressBar
         recyclerView = binding.imageList
-        adapter = PhotosAdapter()
+        noResult = binding.noResult
+        showImageProgress()
+
+        binding.backBtn.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        adapter = EditPhotoListAdapter(DeleteClickListener { photoId ->
+            showImageProgress()
+            collectionReference.child(photoId).removeValue()
+        })
+
         recyclerView.adapter = adapter
 
-        attachPhotoListener()
+        list.observe(viewLifecycleOwner, Observer {
+            if (it.isEmpty()) {
+                hideImageProgress()
+                noResult.visibility = View.VISIBLE
+            } else {
+                hideImageProgress()
+                noResult.visibility = View.GONE
+                adapter.submitList(it)
+            }
+        })
+        //attachPhotoListener()
         return binding.root
     }
 
     override fun onStop() {
         super.onStop()
-        detachListener()
+        collectionReference.removeEventListener(dataListener)
     }
 
     private fun openMemoryIntent() {
@@ -171,7 +215,7 @@ class EditAlbumFragment : Fragment() {
         val collectionRef = firebaseFirestore.collection(getString(R.string.db_node))
             .document(userId).collection("photos")
 
-        val documentRef = collectionRef.document()
+        val documentRef = collectionReference.push()
 
         val metadata = StorageMetadata.Builder()
             .setContentType("image/jpg")
@@ -180,7 +224,7 @@ class EditAlbumFragment : Fragment() {
 
         val storage = FirebaseStorage.getInstance()
         val storageRef: StorageReference = storage.reference.child(
-            "images/users/${documentRef.id}/"
+            "images/users/${documentRef.key}/"
         )
 
         imageByte?.let { imageByteArray ->
@@ -199,11 +243,11 @@ class EditAlbumFragment : Fragment() {
                     val url: Uri? = task.result
 
                     val photo = Photo(
-                        documentRef.id,
+                        documentRef.key,
                         url.toString(),
                         firebaseAuth.currentUser!!.uid
                     )
-                    documentRef.set(photo).addOnSuccessListener {
+                    documentRef.setValue(photo).addOnSuccessListener {
                         Timber.i(" Photo update was Successfully")
                     }.addOnFailureListener { e ->
                         Timber.e(e, "Failed to update photo on FireStore")
@@ -237,6 +281,27 @@ class EditAlbumFragment : Fragment() {
         // hideImageProgress()
     }
 
+    private fun setUpDataListener() {
+
+        dataListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                Timber.i("Listening to Photos $snapshot")
+                snapshot.children.mapNotNullTo(listData) {
+                    it.getValue(Photo::class.java)
+                }.also {
+                    list.postValue(listData)
+                }
+                //listData.mapTo(list){ photo ->   }
+                Timber.i("Returning Photos$ $listData")
+                // hideImageProgress()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        }
+    }
+
     private fun detachListener() {
         registration.remove()
     }
@@ -250,11 +315,15 @@ class EditAlbumFragment : Fragment() {
     }
 
     private fun showImageProgress() {
-        imageProg.visibility = View.VISIBLE
+        lifecycleScope.launchWhenResumed {
+            imageProg.visibility = View.VISIBLE
+        }
     }
 
     private fun hideImageProgress() {
-        imageProg.visibility = View.GONE
+        lifecycleScope.launchWhenResumed {
+            imageProg.visibility = View.GONE
+        }
     }
 
 }

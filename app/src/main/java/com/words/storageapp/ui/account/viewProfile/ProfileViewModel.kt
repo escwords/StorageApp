@@ -1,7 +1,8 @@
 package com.words.storageapp.ui.account.viewProfile
 
 import androidx.lifecycle.*
-import com.words.storageapp.database.model.LoggedInUser
+import com.words.storageapp.database.model.ClientDbModel
+import com.words.storageapp.database.model.LabourerDbModel
 import com.words.storageapp.domain.Photo
 import com.words.storageapp.domain.RegisterUser
 import com.words.storageapp.ui.account.user.UserRepository
@@ -13,25 +14,29 @@ class ProfileViewModel @Inject constructor(
     private val repository: UserRepository
 ) : ViewModel() {
 
-    val userData: LiveData<LoggedInUser> = liveData {
+    val userData: LiveData<LabourerDbModel> = liveData {
         emitSource(repository.loggedUser)
     }
+
+    private val _createSuccess = MutableLiveData<Boolean>()
+    val createSuccess: LiveData<Boolean>
+        get() = _createSuccess
 
     val user = MutableLiveData<RegisterUser>()
     private val serverPhotos = MutableLiveData<List<Photo>>()
 
     val isAcctActive: LiveData<Event<Boolean?>> = userData.map {
-        Event(it.accountActive) ?: Event(false)
+        Event(true)
     }
 
 
-    fun initializeAccount(loggedInUser: LoggedInUser) {
+    fun initializeAccount(loggedInUser: LabourerDbModel) {
         viewModelScope.launch {
             repository.setUpAccount(loggedInUser)
         }
     }
 
-    fun updateAccount(loggedInUser: LoggedInUser) {
+    fun updateAccount(loggedInUser: LabourerDbModel) {
         viewModelScope.launch {
             repository.insert(loggedInUser)
         }

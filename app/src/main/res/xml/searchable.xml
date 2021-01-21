@@ -4,4 +4,9 @@
     android:hint="Search Skills..."
     android:searchMode="queryRewriteFromData"
     android:searchButtonText="@string/submit"
-    android:inputType="text"></searchable>
+    android:inputType="text"
+    android:searchSuggestAuthority="com.words.storageapp.ui.search.MySearchSuggestion"
+    android:searchSuggestSelection=" ?">
+    >
+
+</searchable>

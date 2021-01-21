@@ -2,6 +2,7 @@ package com.words.storageapp.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.location.Location
 import androidx.work.workDataOf
 import javax.inject.Inject
 
@@ -20,6 +21,7 @@ class SharedPreference @Inject constructor(context: Context) : Storage {
             apply()
         }
     }
+
 
     override fun getLocationState(key: String): Boolean {
         return sharedPref.getBoolean(key, false)

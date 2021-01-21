@@ -1,17 +1,15 @@
 package com.words.storageapp.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.words.storageapp.database.model.MiniWokrData
+import com.words.storageapp.database.model.MiniSkillModel
 import com.words.storageapp.databinding.ResultListCardBinding
 
 class ResultListAdapter(private val listener: ClickListener) :
-    ListAdapter<MiniWokrData, RecyclerView.ViewHolder>(diffUtil) {
+    ListAdapter<MiniSkillModel, RecyclerView.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         //val inflater = LayoutInflater.from(parent.context)
@@ -30,21 +28,7 @@ class ResultListAdapter(private val listener: ClickListener) :
     class SkillsViewHolder(private val binding: ResultListCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-//        init {
-//            //setting up onClickListener for the search Result
-//            binding.setClickListener {
-//                binding.skills?.let { skill ->
-//                    navToDetailFragment(skill,it)
-//                }
-//            }
-//        }
-
-//        fun navToDetailFragment(skill: MiniWokrData, view: View){
-//            val direction = FragmentD
-//            view.findNavController().navigate(direction)
-//        }
-
-        fun bind(data: MiniWokrData, listener: ClickListener) {
+        fun bind(data: MiniSkillModel, listener: ClickListener) {
             binding.skills = data
             binding.clickListener = listener
             binding.executePendingBindings()
@@ -56,21 +40,26 @@ class ResultListAdapter(private val listener: ClickListener) :
                 return SkillsViewHolder(ResultListCardBinding.inflate(inflater, parent, false))
             }
         }
-
     }
 
-    class ClickListener(val listener: (skills: MiniWokrData) -> Unit) {
-        fun onClick(skill: MiniWokrData) = listener(skill)
+    class ClickListener(val listener: (skills: MiniSkillModel) -> Unit) {
+        fun onClick(skill: MiniSkillModel) = listener(skill)
     }
 
     companion object {
 
-        val diffUtil = object : DiffUtil.ItemCallback<MiniWokrData>() {
-            override fun areItemsTheSame(oldItem: MiniWokrData, newItem: MiniWokrData): Boolean {
-                return oldItem.userId == oldItem.userId
+        val diffUtil = object : DiffUtil.ItemCallback<MiniSkillModel>() {
+            override fun areItemsTheSame(
+                oldItem: MiniSkillModel,
+                newItem: MiniSkillModel
+            ): Boolean {
+                return oldItem.skillId == oldItem.skillId
             }
 
-            override fun areContentsTheSame(oldItem: MiniWokrData, newItem: MiniWokrData): Boolean {
+            override fun areContentsTheSame(
+                oldItem: MiniSkillModel,
+                newItem: MiniSkillModel
+            ): Boolean {
                 return oldItem == newItem
             }
 

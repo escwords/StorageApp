@@ -2,19 +2,16 @@ package com.words.storageapp.ui.account
 
 
 import android.content.Context
-import android.content.Context.*
 import android.os.Bundle
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -23,20 +20,20 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.words.storageapp.R
+import com.words.storageapp.database.model.toClientDbModel
 import com.words.storageapp.databinding.FragmentLoginBinding
 import com.words.storageapp.domain.RegisterUser
 import com.words.storageapp.domain.toLoggedInUser
 import com.words.storageapp.ui.account.viewProfile.ProfileViewModel
 import com.words.storageapp.ui.main.MainActivity
+import com.words.storageapp.util.AccountType
+import com.words.storageapp.util.CLIENT
+import com.words.storageapp.util.LABOURER
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-/**
- * A simple [Fragment] subclass.
- */
 class LoginFragment : Fragment(), View.OnClickListener {
 
     private lateinit var firebaseAuth: FirebaseAuth
@@ -45,7 +42,6 @@ class LoginFragment : Fragment(), View.OnClickListener {
     private lateinit var fireStore: FirebaseFirestore
 
     private lateinit var progressBar: ProgressBar
-
 
     @Inject
     lateinit var profileViewModel: ProfileViewModel
@@ -111,7 +107,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
         when (view?.id) {
             R.id.login -> {
                 if (validate()) {
-                    (activity as MainActivity).hidekeyboard(this.requireView())
+                    (activity as MainActivity).hideKeyBoard(this.requireView())
                     signInUser(logEmail.text.toString(), logPassWord.text.toString())
                 }
             }
@@ -151,22 +147,22 @@ class LoginFragment : Fragment(), View.OnClickListener {
         if (currentUserId != null) {
             val documentRef =
                 fireStore.collection(getString(R.string.fireStore_node)).document(currentUserId)
-            documentRef.get().addOnSuccessListener { documentSnapshot ->
 
-                lifecycleScope.launch(Dispatchers.IO) {
+            documentRef.get().addOnSuccessListener { documentSnapshot ->
+                lifecycleScope.launch(Dispatchers.Main) {
 
                     val user = documentSnapshot.toObject<RegisterUser>()
                     user?.let { registeredUser ->
+
                         profileViewModel.initializeAccount(
                             registeredUser.toLoggedInUser().also {
                                 Timber.i("LoggedUser: $it")
                             })
+                        progressBar.visibility = View.GONE
+                        val action = R.id.action_authFragment_to_profileFragment
+                        findNavController().navigate(action)
                     }
-
                 }
-                progressBar.visibility = View.GONE
-                val action = R.id.action_authFragment_to_profileFragment
-                findNavController().navigate(action)
 
             }.addOnFailureListener { e ->
                 Timber.e(e, "Failed to Retrieve User")
@@ -176,6 +172,14 @@ class LoginFragment : Fragment(), View.OnClickListener {
             }
         } else {
             Timber.i("UserId is Null")
+        }
+    }
+
+    private fun cacheAccountType(account: String) {
+        val sharedPref = (activity as MainActivity).sharedPref
+        with(sharedPref.edit()) {
+            putString(AccountType, account)
+            commit()
         }
     }
 }

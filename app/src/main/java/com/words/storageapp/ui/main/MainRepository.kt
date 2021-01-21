@@ -7,16 +7,4 @@ class MainRepository(
 
 ) {
 
-    private val collectionRef = FirebaseFirestore.getInstance()
-        .collection("skills")
-
-    val geoFireStore = GeoFirestore(collectionRef)
-
-
-    fun prefetch() {
-
-
-    }
-
-
 }

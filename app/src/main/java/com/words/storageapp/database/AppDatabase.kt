@@ -5,21 +5,22 @@ import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.words.storageapp.database.model.Converter
-import com.words.storageapp.database.model.LoggedInUser
-import com.words.storageapp.database.model.WokrData
-import com.words.storageapp.database.model.WokrDataFts
+import com.words.storageapp.database.model.*
 import com.words.storageapp.work.SeedDatabaseWorker
 
 @Database(
-    entities = [LoggedInUser::class, WokrData::class, WokrDataFts::class],
-    version = 1,
+    entities = [LabourerDbModel::class, AllSkillsDbModel::class, AllSkillsFts::class,
+        ClientDbModel::class, NearByDbModel::class, NearByDbFts::class, AddressModel::class],
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converter::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun loggedInUserDao(): LoggedInUserDao
-    abstract fun wokrDataDao(): WokrDataDao
+    abstract fun labourerDbDao(): LabourerDbDao
+    abstract fun allSkillsDbDao(): AllSkillsDbDao
+    abstract fun clientDbDao(): ClientDbDao
+    abstract fun nearbyDbDao(): NearByDbDao
+    abstract fun addressDao(): AddressDao
 
     companion object {
 
@@ -30,7 +31,6 @@ abstract class AppDatabase : RoomDatabase() {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
             }
-
         }
 
         private fun buildDatabase(context: Context): AppDatabase {
